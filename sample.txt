@@ -1,0 +1,21 @@
+xquery version "1.0-ml";
+declare namespace es = "http://marklogic.com/entity-services";
+declare namespace edh = "http://erieinsurance.com/erie-datahub-metadata";
+
+let $validationfrom := '2024-10-20T00:00:00'
+let $validationto := '2024-10-21T23:59:59'
+let $raj := cts:uris((),(),
+cts:and-query((
+cts:collection-query((("policy-wc-policy-real-time-to-be-processed","policy-event-wc-policy-real-time-to-be-processed"))),
+cts:element-range-query(xs:QName("edh:inputDocumentCreationDate"),">=",xs:dateTime($validationfrom)),
+ 
+cts:element-range-query(xs:QName("edh:inputDocumentCreationDate"),"<=",xs:dateTime($validationto))
+ 
+))
+)!
+(
+let $request_id := doc(.)//*:requestId/string()
+return $request_id
+
+)
+return count(distinct-values($raj))
